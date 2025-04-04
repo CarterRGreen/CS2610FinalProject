@@ -1,7 +1,7 @@
 # CS2610FinalProject
 A MTG card search, storage, and deck storage
 
-
+```
 \documentclass[10pt, AMS Euler]{article}
 \textheight=9in \textwidth=6.5in \topmargin=-.75in
 \oddsidemargin=-0in
@@ -67,3 +67,4 @@ The project I will be developing will be a Magic the Gathering (the trading card
     \item I will use the backend and the database to save users decks and card collection.
 \end{itemize}
 \end{document}
+```

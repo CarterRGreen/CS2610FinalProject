@@ -2,17 +2,6 @@
 A MTG card search, storage, and deck storage
 
 ```math
-\documentclass[10pt, AMS Euler]{article}
-\textheight=9in \textwidth=6.5in \topmargin=-.75in
-\oddsidemargin=-0in
-\evensidemargin=-0.25in
-\usepackage{fontawesome} % Smiley Faces
-\setlength{\intextsep}{5mm} \setlength{\textfloatsep}{5mm}
-\setlength{\floatsep}{5mm}
-
-%%%% document %%%%
-\begin{document}
-
 \noindent\large Carter Green\\
 \noindent{\bf \large CS 2610 Final Project Proposal }\\
 \noindent \underline{\hspace{4in}}\\
@@ -66,5 +55,4 @@ The project I will be developing will be a Magic the Gathering (the trading card
     \item My app will have a consistent design by having the same color palette, headers, etc. across pages.
     \item I will use the backend and the database to save users decks and card collection.
 \end{itemize}
-\end{document}
 ```

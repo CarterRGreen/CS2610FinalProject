@@ -93,7 +93,7 @@ Now to plan individual pages:
 * Collection: Under the banner, there will be a row that allows users to filter what cards they are viewing. Then the cards themselves, paginated.
     1. *Filter Options*, check boxes for name, color - separate ones for each color , power, toughness, set, type, subtype. If a checkbox - except
         for a color - is selected, then a text box will appear next to the check box for users to type in what they want exactly they want to filter by. Then after the filter options, there will be a page selection. It will be of the type that shows the number of page currently on, then allows users to select among the next three pages in either direction and the very first and last page.
-    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows.
+    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. Hovering over a card will pull up a popup allowing the user to remove a specifiable quantity of that card from the collection.
 
 * Decks: Under the banner, there will be a row that allows users to filter what decks they are viewing. Then the decks themselves, paginated.
     1. *Filter Options*, check boxes for name, color - separate ones for each color. If the name checkbox is selected, then a text box will appear next to it for users to type in what to filter by. Then after the filter options, there will be a page selection. It will be of the type that shows the number of page currently on, then allows users to select among the next three pages in either direction and the very first and last page.
@@ -102,7 +102,7 @@ Now to plan individual pages:
 * Wanted Cards: Under the banner, there will be a row that allows users to filter what cards they are viewing. Then the cards themselves, paginated.
     1. *Filter Options*, check boxes for name, color - separate ones for each color , power, toughness, set, type, subtype. If a checkbox - except
         for a color - is selected, then a text box will appear next to the check box for users to type in what they want exactly they want to filter by. Then after the filter options, there will be a page selection. It will be of the type that shows the number of page currently on, then allows users to select among the next three pages in either direction and the very first and last page.
-    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows.
+    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. Hovering over the card will pull up a popup allowing the user to remove a speicifiable quantity of that card from the wanted list either to the users collection or to nothing.
 
 * Deck: Under the banner, there will be the following, in order:
     1. Warnings about the deck. If the deck is not a legal for the deck type, then a warning will be given here.
@@ -110,13 +110,13 @@ Now to plan individual pages:
     3. The cards in the deck will be sorted by type - as in land, creature, etc. There will be two columns of cards. Inside of each type, the cards will be sorted by mana value. Each row in each column will show the name of a card and its mana value. Hovering over the name will show an image of the card off to the side.
 
 * Card: Under the banner, there will be two columns
-1. The first column will have the image of the card. The second column will have
-    1. Card Name: *Card Name* 
-    2. Card Type: *Card Type* 
-    3. Card Legalities: *legalities* 
-    4. Card Set: *Set name* 
-2. Add card:
-3. *Integer field initialized to 1*, *Drop down box initialized to collection, but allowing wanted list and decks*, *button saying "Add"*
+    1. The first column will have the image of the card. The second column will have
+        1. Card Name: *Card Name* 
+        2. Card Type: *Card Type* 
+        3. Card Legalities: *legalities* 
+        4. Card Set: *Set name* 
+    2. Add card:
+    3. *Integer field initialized to 1*, *Drop down box initialized to collection, but allowing wanted list and decks*, *button saying "Add"*
 
     
 
@@ -132,4 +132,71 @@ Now to plan individual pages:
     9. *Button saying "Search"*
     10. "Results:" *If needed, arrows to go between pages of results*
     11. *The results of the search. They will be a paginated row of card names. There will be at most 100 rows. Each row will have the card name and the set that card was released in.
+
+## Data Structures
+
+Before we can make pseudocode, we need to plan out what data will be stored in the database. User authentication and session tokens will be taken care of by Django. So we just need to store Collections, Decks, Wanted Lists, and Card and the custom bridge tables CollectionCard, WantedCard, DeckCard
+
+#### Card
+
+Because this will be a small application only used by a few users, we will store some information about the cards in users collections, decks, and wanted list. This will save on API calls we make, because the free MTG API has a limit on the number of calls we can make. Each card will store the following information:
+
+* ID: Self-population
+* Card Name: a String
+* Colors: a list of strings
+* Image: a url to the image
+* mana_cost: a string
+* Type: a string
+* Subtype: a string
+* Set: A string
+* Power: an integer
+* Toughness: an integer
+
+#### Collection
+
+Collection will have a one to one relationship with users and a many to many relationship with Card. However, because we want to store the quantity, we will make a custom bridge table called CollectionCard
+
+* ID: Self-populationg
+* User: User ID
+
+#### CollectionCard
+
+This is a custom bridge table. It will have a one to many relationship with Collection and a one to many relationship with Card. It will let us store the quantity of cards a user has in their collection. It will store the following information:
+
+* ID: Self-population
+* Collection: Collection ID
+* Card: Card ID
+* Quantity: Integer
+
+#### Wanted
+
+Wanted will have a one to one relationship with users and a many to many relationship with Card. However, because we will want to store the quantity, we will make a custom bridge table called WantedCard. It will store the following:
+
+* ID: Self-population
+* User: User ID
+
+#### WantedCard
+
+This is a custom bridge table. It will have a one to one to many relationship with Wanted and a one to many relationship with Card. It will store the following:
+
+* ID: Self-populating
+* Wanted: Wanted ID
+* Card: Card ID
+* Quantity: Integer
+
+#### Deck
+
+Deck will have a one to many relationship with user and a many to many relatioship with Card. However, because we will want to store the quantity, we will make a custom bridge table called DeckCard. It will store the following:
+
+* ID: Self-population
+* User: User ID
+
+#### DeckCard
+
+DeckCard is a custom bridge table. It will have a one to many relationship with Deck and a one to many relationship with Card. It will store the following:
+
+* ID: Self-population
+* Deck: Deck ID
+* Card: Card ID
+
 

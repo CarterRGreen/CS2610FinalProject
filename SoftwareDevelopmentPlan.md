@@ -110,12 +110,11 @@ Now to plan individual pages:
     3. The cards in the deck will be sorted by type - as in land, creature, etc. There will be two columns of cards. Inside of each type, the cards will be sorted by mana value. Each row in each column will show the name of a card and its mana value. Hovering over the name will show an image of the card off to the side.
 
 * Card: Under the banner, there will be two columns
-1. | ---------------------------------------- |
-    | *Card Image* | Card Name: *Card Name* |
-   |              | ----------------------- |
-   |              | Card Type: *Card Type* |
-   |              | Card Legalities: *legalities* |
-   |              | Card Set: *Set name* |
+1. The first column will have the image of the card. The second column will have
+    1. Card Name: *Card Name* 
+    2. Card Type: *Card Type* 
+    3. Card Legalities: *legalities* 
+    4. Card Set: *Set name* 
 2. Add card:
 3. *Integer field initialized to 1*, *Drop down box initialized to collection, but allowing wanted list and decks*, *button saying "Add"*
 

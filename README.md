@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # CS2610FinalProject
 A MTG card search, storage, and deck storage
 
@@ -14,7 +13,7 @@ The project I will be developing will be a Magic the Gathering (the trading card
 ### Must Have Features
     * As a user, I should be able to create an account.
     * As a user, I should be able to sign in to that account.
-    * As a user, I should be able to delete my account \faFrownO.
+    * As a user, I should be able to delete my account.
     * As a user, I should be able to search for cards without being logged in.
     * As a user, I should be able to add cards to my collection (meaning cards that I own), but only while logged in. I should be able to specify how many of each card I have.
     * As a user, I should be able to search the cards I own for a specific card, color, power, toughness, etc.
@@ -32,6 +31,7 @@ The project I will be developing will be a Magic the Gathering (the trading card
     * As a user, It would be nice to be able to create decks of types other than EDH.
     * As a user, I should be able to look at the cards that are in my collection with their full image being available.
     * As a user, It would be nice to be able to playtest a deck. Meaning that you are given a starting hand, and can play/draw cards and take turns as usual. It would be a one player game.
+    * As a user, It would be nice to be able to reset your password if you forget it.
     
 ## Technical Challenges
     * I anticipate having to load a lot of cards in a search, so I will need to implement pagination.
@@ -45,7 +45,14 @@ The project I will be developing will be a Magic the Gathering (the trading card
     * My app will be useful because it will allow users to digitize and utilize their MTG card collection.
     * My app will have a consistent design by having the same color palette, headers, etc. across pages.
     * I will use the backend and the database to save users decks and card collection.
-=======
+
+
+
+
+
+
+# Details from Joseph Ditton
+
 # 2610 Django + Vite Starting Point
 This project serves as a starting point you to use as a starting point for Django applications that use Vite as the asset server for development. You are welcome to us this project for all of your assignments beginning with Module 5.
 
@@ -74,4 +81,3 @@ This application is a hybrid MPA and SPA. It reuses all of the login stuff that 
 
 ## Using this project for future classes/personal projects
 Many students in the past have chosen to use this starter app template for projects in other classes like CS3450 and for personal projects. I strongly encourage you to do so! Please check with your other instructors before you use this project as a starting point for their classes. You may also want to add your name to the author field in the `pyproject.toml` file.
->>>>>>> 5f7a6b929b5eecc062f1db2e62b22706be4875fe

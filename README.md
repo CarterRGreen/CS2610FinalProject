@@ -14,7 +14,7 @@ The project I will be developing will be a Magic the Gathering (the trading card
     * As a user, I should be able to create an account.
     * As a user, I should be able to sign in to that account.
     * As a user, I should be able to delete my account.
-    * As a user, I should be able to search for cards without being logged in.
+    * As a user, I should be able to search for cards (while being logged in).
     * As a user, I should be able to add cards to my collection (meaning cards that I own), but only while logged in. I should be able to specify how many of each card I have.
     * As a user, I should be able to search the cards I own for a specific card, color, power, toughness, etc.
     * As a user, I should be able to add cards to a list of cards I want to buy (similar to a cart but without actually being able to purchase anything).

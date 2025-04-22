@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite + Django</title>
+  <link rel="stylesheet" href="{% static 'core/style.css' %}">
+</head>
+<body>
+    <div class="header">
+        <span class="left_side">
+            <a href="/home/" class="link">Home</a>
+        </span>
+        <span class="right_side">
+            <a href="/registration/sign_in/" class="active_link link">Login</a>
+            <a href="/registration/sign_up/" class="active_link link">Create Account</a>
+        </span>
+    </div>
+    <div class="header_filler"></div>
+    <main>
+        <h1>MTG Card and Deck Database</h1>
+        <h2>Log in to start organizing your collection</h2>
+    </main>
+</body>
+</html>

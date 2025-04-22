@@ -5,28 +5,28 @@
   {% csrf_token %}
   <div>
     <label>
-      First Name
+      <div>First Name</div>
       <input type="text" name="first_name">
     </label>
   </div>
   <div>
     <label>
-      Last Name
+      <div>Last Name</div>
       <input type="text" name="last_name">
     </label>
   </div>
   <div>
     <label>
-      Email
+      <div>Email</div>
       <input type="email" name="email">
     </label>
   </div>
   <div>
     <label>
-      Password
+      <div>Password</div>
       <input type="password" name="password">
     </label>
   </div>
-  <button>Create Account</button>
+  <button class="form_button">Create Account</button>
 </form>
 {% endblock %}

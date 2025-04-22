@@ -9,9 +9,23 @@
     /* style your login pages here because the normal
       static asset flow is different now */
   </style>
+  <link rel="stylesheet" href="{% static 'core/style.css' %}">
 </head>
 <body>
-  {% block content %}
-  {% endblock %}
+  <div class="header">
+    <span class="left_side">
+      <a href="/home/" class="active_link link">Home</a>
+    </span>
+    <span class="right_side">
+      <a href="/registration/sign_in"class="active_link link">Login</a>
+      <a href="/registration/sign_up/" class="active_link link">Create Account</a>
+    </span>
+  </div>
+  <div class="header_filler"></div>
+  <main>
+    <h1>MTG Card and Deck Database</h1>
+    {% block content %}
+    {% endblock %}
+  </main>
 </body>
 </html>

@@ -26,6 +26,7 @@ class CollectionCard(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='collection_cards')
     card = models.ForeignKey(MyCard, on_delete=models.CASCADE, related_name='collection_card')
     quantity = models.IntegerField()
+    date_added = models.DateTimeField(auto_now_add=True)
 
 class Wanted(models.Model):
     id = models.AutoField(primary_key=True)
@@ -36,6 +37,7 @@ class WantedCard(models.Model):
     wanted = models.ForeignKey(Wanted, on_delete=models.CASCADE, related_name='wanted_cards')
     card = models.ForeignKey(MyCard, on_delete=models.CASCADE, related_name='wanted_card')
     quantity = models.IntegerField()
+    date_added = models.DateTimeField(auto_now_add=True)
 
 class Deck(models.Model):
     id = models.AutoField(primary_key=True)

@@ -92,17 +92,17 @@ Now to plan individual pages:
 
 * Collection: Under the banner, there will be a row that allows users to filter what cards they are viewing. Then the cards themselves, paginated.
     1. *Filter Options*, check boxes for name, color - separate ones for each color , power, toughness, set, type, subtype. If a checkbox - except
-        for a color - is selected, then a text box will appear next to the check box for users to type in what they want exactly they want to filter by. Then after the filter options, there will be a page selection. It will be of the type that shows the number of page currently on, then allows users to select among the next three pages in either direction and the very first and last page.
-    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. Hovering over a card will pull up a popup allowing the user to remove a specifiable quantity of that card from the collection.
+        for a color - is selected, then a text box will appear next to the check box for users to type in what they want exactly they want to filter by. Then after the filter options, there will be a page selection. It will let you move to the previous and next page
+    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. Double clicking on a card will pull up a popup allowing the user to remove a specifiable quantity of that card from the collection.
 
 * Decks: Under the banner, there will be a row that allows users to filter what decks they are viewing. Then the decks themselves, paginated.
-    1. *Filter Options*, check boxes for name, color - separate ones for each color. If the name checkbox is selected, then a text box will appear next to it for users to type in what to filter by. Then after the filter options, there will be a page selection. It will be of the type that shows the number of page currently on, then allows users to select among the next three pages in either direction and the very first and last page. At the end of this row will be a button that says "Create Deck".
-    2. *Cards*: The names of the decks and images of the commander (or first card) of the deck be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. At most 50 decks will be on a page.
+    1. *Filter Options*, check boxes for name, color - separate ones for each color. If the name checkbox is selected, then a text box will appear next to it for users to type in what to filter by. Then after the filter options, there will be a page selection. It will let you move to the previous and next page. At the end of this row will be a button that says "Create Deck".
+    2. *Decks*: The names of the decks and images of the commander (or first card) of the deck be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. At most 50 decks will be on a page.
 
 * Wanted Cards: Under the banner, there will be a row that allows users to filter what cards they are viewing. Then the cards themselves, paginated.
     1. *Filter Options*, check boxes for name, color - separate ones for each color , power, toughness, set, type, subtype. If a checkbox - except
-        for a color - is selected, then a text box will appear next to the check box for users to type in what they want exactly they want to filter by. Then after the filter options, there will be a page selection. It will be of the type that shows the number of page currently on, then allows users to select among the next three pages in either direction and the very first and last page.
-    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. Hovering over the card will pull up a popup allowing the user to remove a speicifiable quantity of that card from the wanted list either to the users collection or to nothing.
+        for a color - is selected, then a text box will appear next to the check box for users to type in what they want exactly they want to filter by. Then after the filter options, there will be a page selection. It will let you move to the previous and next page
+    2. *Cards*: The images for the page of at most 50 cards will be displayed. They will be in a flex box with overflow being wrap. So there will be many rows. Double clicking on a card will pull up a popup allowing the user to remove a speicifiable quantity of that card from the wanted list either to the users collection or to nothing.
 
 * Deck: Under the banner, there will be the following, in order:
     1. Warnings about the deck. If the deck is not a legal for the deck type, then a warning will be given here.
@@ -111,10 +111,9 @@ Now to plan individual pages:
 
 * Card: Under the banner, there will be two columns
     1. The first column will have the image of the card. The second column will have
-        1. Card Name: *Card Name* 
-        2. Card Type: *Card Type* 
-        3. Card Legalities: *legalities* 
-        4. Card Set: *Set name* 
+        1. *Card Name* 
+        2. *Card Type* 
+        4. *Set name* 
     2. Add card:
     3. *Integer field initialized to 1*, *Drop down box initialized to collection, but allowing wanted list and decks*, *button saying "Add"*
 
@@ -130,7 +129,7 @@ Now to plan individual pages:
     8. "Subtype:" *Text box for subtype*
     9. *Button saying "Search"*
     10. "Results:" *If needed, arrows to go between pages of results*
-    11. *The results of the search. They will be a paginated row of card names. There will be at most 100 rows. Each row will have the card name and the set that card was released in.
+    11. *The results of the search. They will be a paginated list of card images. There will be at most 100 cards. 
 
 * Create Deck: Under the banner there will be the following:
     1. "Deck Type:" *Drop down list that currently only says Commander*
@@ -177,6 +176,7 @@ This is a custom bridge table. It will have a one to many relationship with Coll
 * collection: Collection object
 * card: Card object
 * quantity: Integer
+* date_added: date-time
 
 #### Wanted
 
@@ -184,6 +184,7 @@ Wanted will have a one to one relationship with users and a many to many relatio
 
 * id: Self-population
 * user: User object
+* date_added: date-time
 
 #### WantedCard
 
@@ -217,7 +218,7 @@ DeckCard is a custom bridge table. It will have a one to many relationship with 
 * card: Card object
 * quantity: integer
 
-## Psuedocode for Django Endpoints
+## Django Endpoints
 
 Now we are ready to build pseudocode for the endpoints in Django.
 
@@ -265,7 +266,7 @@ Now we are ready to build pseudocode for the endpoints in Django.
 #### "/add_cards_to_deck/"
     Adds cards to a deck
     Input: Dictionary in JSON
-        List of cards to add
+        cards: List of cards to add 
         "deck_id": ID of deck
     Output: JsonResponse of a dictionary:
         "card_data": List of errors or card details
@@ -299,7 +300,7 @@ Now we are ready to build pseudocode for the endpoints in Django.
 #### "/remove_card_from_deck/"
     Removes a Card from a Deck (and the database if possible)
     Input: Dictionary in JSON
-        List of cards to remove,
+        "cards": List of cards to remove (only has their mtgsdk ids)
         "deck_id": id of deck to remove from
     Output: Dictionary in JSON
         "card_data": List of errors or card details
@@ -330,9 +331,972 @@ Now we are ready to build pseudocode for the endpoints in Django.
 #### "/remove_card_from_wanted/"
     functionally the same as "/remove_card_from_deck/"
 
+#### "/get_card_details/"
+    This gets details about a card
+    Input: Dictionary in JSON
+        card id: the mtgsdk id of the card
+    Output: Dictionary in JSON
+        card: the details of the card
+    pseudocode:
+
+    ```python
+    def get_card_details(req):
+        verify the card id was sent in the request
+        send a request to the mtgsdk for details on the card
+        bundle that request inside of a dictionary and return it
+    ```
+
+#### "/search_for_card/"
+    This performs a search in the mtgsdk for card details
+    Input: Dictionary in JSON
+    Output: Dictionary in JSON
+        cards: a list of dictionaries of card details
+    pseudocode:
+
+#### "/sample_collection/"
+    This grabs the most recent cards that have been added to the collection
+    Input: Dictionary in JSON
+        num_cards: the maximum number of cards to return
+        page: the page of results
+    Output: Dictionary in JSON
+        cards: the list of cards
+        numpages: the number of pages with this many cards
+
+    ```python
+    def sample_collection(req):
+        unpack the input dictionary from the request. 
+        If num_cards isn't in the dictionary, return an error
+        grab the collection from the user
+        if the page is too high, return an error
+        grab the most recently added cards to the collection from the database
+        chop off all but (at most) num_cards of them at that page
+        return them in a JSON
+    ```
+
+#### "/sample_wanted/"
+    This grabs the most recent cards that have been added to the wanted list
+    Input: Dictionary in JSON
+        num_cards: the maximum number of cards to return
+        page: the page of results
+    Output: Dictionary in JSON
+        cards: the list of cards
+        numpages: the number of pages with this many cards
+
+    ```python
+    def sample_collection(req):
+        unpack the input dictionary from the request. 
+        If num_cards isn't in the dictionary, return an error
+        grab the wanted from the user
+        if the page is too high, return an error
+        grab the most recently added cards to the wanted from the database
+        chop off all but (at most) num_cards of them at that page
+        return them in a JSON
+    ```
+
+#### "/sample_decks/"
+    This grabs the most recently edited decks
+    Input: Dictionary in JSON
+        num_decks: the maximum number of decks to return
+        page: the page of results
+    Output: Dictionary in JSON
+        decks: the list of decks
+        numpages: the number of pages with this many decks
+
+    ```python
+    def sample_collection(req):
+        unpack the input dictionary from the request. 
+        If num_decks isn't in the dictionary, return an error
+        grab the most recently edited decks from the database
+        if the page is too high, return an error
+        chop off all but (at most) num_decks of them at that page
+        return them in a JSON
+    ```
+
+#### "/search_collection/"
+    This performs a search on the cards in the collection
+    Input: Dictionary in JSON 
+        num_cards: the maximum number of cards to return
+        page: the page of results (number)
+        name: the name of the card (string)
+        colors: a dictionary of colors (string)
+        set: the name of the set (string)
+        type: the type of the card (string)
+        subtype: the subtype of the card (string)
+        power: the power of the card (int)
+        toughness: the toughness of the card (int)
+    Output: Dictionary in JSON
+        cards: a list of cards
+        num_pages: how many pages of results there are
+    Pseudocode:
+
+    ```python
+    def search_collection(req):
+        get the dictionary from the body
+        if num_cards or page are missing, return an error
+        get name from the dictionary
+        get colors from the dictionary
+        ...
+        get power from the dictionary (default value of -1)
+        get toughness from the dictionary (default value of -1)
+        filter the collection for cards that contain the name (store in cards)
+        if the colors is not an empty list, for each color in the list:
+            filter the cards by if they have that color
+        if the set is not an empty string:
+            filter the cards by if they are in that set
+        if the type is not an empty string:
+            filter the cards by if they are that type
+        if the subtype is not an empty string:
+            filter the cards by if they are that subtype
+        if the power is not -1:
+            filter the cards by if they are that power
+        if the toughness is not -1:
+            filter the cards by if they are that toughness
+        paginate the cards by num_cards
+        return a dictionary containing cards and num_pages
+    ```
+
+#### "/search_wanted/"
+    This performs a search on the cards in the wanted
+    Input: Dictionary in JSON 
+        num_cards: the maximum number of cards to return
+        page: the page of results (number)
+        name: the name of the card (string)
+        colors: a dictionary of colors (string)
+        set: the name of the set (string)
+        type: the type of the card (string)
+        subtype: the subtype of the card (string)
+        power: the power of the card (int)
+        toughness: the toughness of the card (int)
+    Output: Dictionary in JSON
+        cards: a list of cards
+        num_pages: how many pages of results there are
+    Pseudocode:
+
+    ```python
+    def search_wanted(req):
+        get the dictionary from the body
+        if num_cards or page are missing, return an error
+        get name from the dictionary
+        get colors from the dictionary
+        ...
+        get power from the dictionary (default value of -1)
+        get toughness from the dictionary (default value of -1)
+        filter the wanted for cards that contain the name (store in cards)
+        if the colors is not an empty list, for each color in the list:
+            filter the cards by if they have that color
+        if the set is not an empty string:
+            filter the cards by if they are in that set
+        if the type is not an empty string:
+            filter the cards by if they are that type
+        if the subtype is not an empty string:
+            filter the cards by if they are that subtype
+        if the power is not -1:
+            filter the cards by if they are that power
+        if the toughness is not -1:
+            filter the cards by if they are that toughness
+        paginate the cards by num_cards
+        return a dictionary containing cards and num_pages
+    ```
+
+#### "search_decks"
+This performs a search on the users decks
+    Input: Dictionary in JSON 
+        num_decks: the maximum number of decks to return
+        page: the page of results (number)
+        name: the name of the deck (string)
+        colors: a dictionary of colors (string)
+    Output: Dictionary in JSON
+        decks: a list of decks
+        num_pages: how many pages of results there are
+    Pseudocode:
+
+    ```python
+    def search_decks(req):
+        get the dictionary from the body
+        if num_decks or page are missing, return an error
+        get name from the dictionary
+        get colors from the dictionary
+        filter the deckslist for decks that contain the name (store in decks)
+        if the colors is not an empty list, for each color in the list:
+            filter the decks by if they have that color
+        paginate the decks by num_decks
+        return a dictionary containing decks and num_pages
+    ```
 
 #### "/":
     Does React Stuff
     Given in Starter Code
 
-No Pseudocode Will be given for the React Components at this time
+## React Components
+
+#### "Header"
+    Props: This doesn't have props
+    Uses: This will be used on every page that has a header (so every single page)
+    Output: the .jsx (html?) of the header
+    Psuedocode:
+    ```jsx
+    export function Header() {
+        define a different function for each button that handles when it is pressed
+        return(
+            <>
+                create a div with the className "header"
+                    create a div with the className "left_side"
+                        create a link saying "Home" and leaving reactRouter to go to "/home/"
+                        create a link saying "Dashboard" and staying in reactRouter to go to "/Dashboard"
+                        create a link saying "Collection" and staying in reactRouter to go to "/Collection"
+                        create a link saying "Wanted" and staying in reactRouter to go to "/Wanted"
+                        create a link saying "Decks" and staying in reactRouter to go to "/Decks"
+                    create a div with the className "center"
+                        Display a search bar with default text "Search Cards"
+                    create a div with the className "right_side"
+                        create a link saying "Logout" and leaving reactRouter to go to "/registration/logout/"
+                a div with className "header_filler"
+            </>
+        )
+    }
+    ```
+
+#### "SampleCollection"
+    Input:
+        numCards: the number of cards to return
+        pageNum: the page number of the paginated results
+    Uses: This will be used on the Dashboard to show collection cards
+    Output: a list of cards
+    Psuedocode:
+    ```jsx
+    export function SampleCollection(numCards, pageNum){
+        set a 'sample' to be a state variable
+        define an async function fetchCollectionCards(){
+            make a request to the server requesting numCards cards on pageNum
+            if the request is OK:
+                update 'sample' to be the list of cards
+            otherwise:  
+                output an error message
+        }
+        create a side effect that will run only once{
+            call fetchCollectionCards()
+        }
+        return 'sample'
+    }
+    ```
+
+#### "SampleWanted"
+    Input:
+        numCards: the number of cards to return
+        pageNum: the page number of the paginated results
+    Uses: This will be used on the Dashboard to show wanted cards
+    Output: a list of cards
+    Psuedocode:
+    ```jsx
+    export function SampleWanted(numCards, pageNum){
+        set a 'sample' to be a state variable
+        define an async function fetchWantedCards(){
+            make a request to the server requesting numCards cards on pageNum
+            if the request is OK:
+                update 'sample' to be the list of cards
+            otherwise:  
+                output an error message
+        }
+        create a side effect that will run only once{
+            call fetchWantedCards()
+        }
+        return 'sample'
+    }
+    ```
+
+#### "SampleDecks"
+    Input:
+        numDecks: the number of cards to return
+        pageNum: the page number of the paginated results
+    Uses: This will be used on the Dashboard to show decks
+    Output: a list of decks
+    Psuedocode:
+    ```jsx
+    export function SampleDecks(numDecks, pageNum){
+        set a 'sample' to be a state variable
+        define an async function fetchDecks(){
+            make a request to the server requesting numDecks decks on pageNum
+            if the request is OK:
+                update 'sample' to be the list of decks
+            otherwise:  
+                output an error message
+        }
+        create a side effect that will run only once{
+            call fetchDecks()
+        }
+        return 'sample'
+    }
+    ```
+
+#### "Layout"
+    Props: This doesn't have any props
+    Uses: This will be the template for every page
+    Output: JSX
+    Pseudocode:
+    ```jsx
+    export default App(){
+        <Header />
+        <main>
+            <Outlet />
+        </main>
+    }
+    ```
+
+#### "Dashboard"
+    Props: This doesn't have any props
+    Uses: This will be one of the router pages
+    Output: JSX
+    Pseudocode:
+    ```jsx
+    export function Dashboard(){
+        set collectionCards equal to SampleCollection(10,1)
+        set wantedCards equal to sampleCollection(10,1)
+        set decks equal to sampleDecks(10,1)
+
+        return (
+            <>
+                a link saying "View Collection", leading (within reactRouter) to the collection page
+                a div with className equal to "collection_cards"
+                    map all the cards in collectionCards to an image with the cards URL and when clicked, lead to (within reactRouter) that card's page
+                a link saying "View Decks", leading (within reactRouter) to the decks page
+                a div with className equal to "decks"
+                    map all the decks in decks to an image with the decks URL and when clicked, lead to that deck's page
+                a link saying "View Wanted Cards", leading (within reactRouter) to the wanted page
+                a div with className equal to "wanted_cards"
+                    map all the cards in wantedCards to an image with the cards URL and when clicked, lead to (within reactRouter) that card's page
+            </>
+        )
+    }
+    ```
+
+#### "Input"
+    props: This takes in state variables (for state hoisting purposes)
+    Uses: this is a component. It will be used to collect input
+    Output: JSX
+    Pseudocode:
+    ```jsx
+    export function Input({label, ...props}){
+        return(
+            label with className "input_label"
+                the label
+                Input with className="input", and the props ({...props})
+        )
+    }
+    ```
+
+#### "Collection"
+    props: this doesn't use any props
+    Uses: this is one of the router pages
+    Output: JSX
+    Style Notes: 
+        the search filter will have multiple rows, each row with a checkbox to turn on and off the search feature
+        the error message will be the same across pages, a white box with red border
+        when a card is selected, the popup will be on the top of the page, but not covering the header (the popup will be two columns)
+            then a gray backdrop will appear behind all the cards and header buttons but in front of everything else
+    Pseudocode:
+
+    ```jsx
+    export function Collection() {
+        create state variables for the search bar:
+            "name_box" (to turn on name search), "name" (to search by name), "color_box", "red", "blue", "white", "black", "green", "power_box", "power", "toughness_box", "toughness", "set_box", "set", "type_box", "type", "subtype_box", "subtype"
+        create a state variable "cards": to hold the list of cards returned by the search
+        create a state variable "isPrevious": to say whether there is a previous page
+        create a state variable "isNext": to say whether there is a next page
+        create a state variable "page": to say the current page number
+        create a state variable "isError": to say whether an error showed up in the search
+        create a state variable "errorMessage": to be the message of the error
+        create a state variable "isCardSelected": to say whether or not a card has been double clicked on
+        create a state variable "selectedCard": to be the double clicked card
+        create a state variable "isMoveToWanted": to show whether the card will be moved to the wanted collection
+        create a state variable "amountToRemove": the number of cards to remove from the collection
+        create a state variable "amountToWant": the number of cards to add to the wanted collection
+        
+        create an asyncronous function doSearch(){
+            send the search request to the Django server
+            if the request is a success:
+                update the cards
+                if there is a next page, set isNext to true
+                if there is a previous page, set isPrevious to true
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        create an asynchronous function removeFromCollection(){
+            send a remove request to the Django server
+            if the request is a success:
+                if the user wants to add the card to the wanted list:
+                    send the add request to the Django server
+                    if that request is a success:
+                        remove the card from the list of cards
+                        call doSearch to refresh collection page
+                    if that request is a failure
+                        set isError to true
+                        set errorMessage to the message in the request
+                        in 7 seconds, set isError to false
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        return(
+            <>
+                if isError is true: a div with className "error_message" and text errorMessage; else: nothing
+                if isCardSelected: a div with className "popup"; else: nothing
+                    a div with className "left_side"
+                        a h3 header saying "Remove from Collection"
+                        a div saying the card name
+                        an Input with label="Quantity to remove", type=number, value=amountToRemove, onChange = update amountToRemove (ensuring it doesn't exceed the amount in collection)
+                        an Input with label="Add to Wanted", type="Checkbox", value="isMoveToWanted", onChange = update isMoveToWanted
+                        if isMoveToWanted: an Input with label "Amount to add to Wanted", type=number, value=amountToWant, onChange = update amountToWant (ensuring it doesn't exceed the amount in collection)
+                    a div with className "right_side"
+                        the image of the card
+                    A button saying submit that when pressed, calls removeFromCollection
+                if isCardSelected: a div with className "cover"; else nothing
+                A header saying "Collection"
+                a div with className "filter_container"
+                    a div with className "filter_row"
+                        an Input with label="Name", type="Checkbox", value=name_box, onChange=(e => update name_box), className="checkbox"
+                        if name_box is true, an input with className="search_bar", type="text", value=name, onChange(update name)
+                    a div with className "filter_row"
+                        an Input with label="Color", type="Checkbox", value="color_box", onChange=(update name), className="checkbox"
+                        if color_box is true, a checkbox for Red, Blue, White, Black, Red
+                    repeat this process for power, toughness, set, type, subtype (correct input types for each)
+                    a button with className = "submit" and text "Search" and onClick= call doSearch
+                a div with className "page_selection"
+                    a div with className "left_side"
+                        If there is a prior page of results, display a previous arrow with onClick = update page then call doSearch
+                    a div with className "right_side"
+                        If there is a next page of results, display a next arrow with onClick = update page then call doSearch
+                a div with className "display_container" with when clicked
+                    for every card in cards:
+                        create an image with the src being the URL from the card, and when clicked redirects to that card's page (card/cardID)
+                        when double clicking on the card (dblclick), set isCardSelected to true and selectedCard to this card
+            </>
+        )
+    }
+    ```
+
+#### "Decks"
+    props: This doesn't use any props
+    Uses: This is one of the router pages
+    Output: JSX
+    Style Notes:
+        the search filter will have multiple rows, each row with a checkbox to turn on and off the search feature
+        the error message will be the same across pages, a white box with red border
+    Pseudocode:
+
+    ```jsx
+    export function Decks(){
+        create state variables for the search bar: "isName", "name", "isColor", "red", "blue", "white", "black", "green" 
+        create a state variable "decks": to hold the list of decks
+        create a state variable "isPrevious": to say whether there is a previous page
+        create a state variable "isNext": to say whether there is a previous page
+
+        create an asynchronous function doSearch(){
+            send the search request to the Django server
+            if the request is a success:
+                update the decks
+                if there is a next page, set isNext to true
+                if there is a previous page, set isPrevious to true
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+        
+
+        return(
+            <>
+                if isError is true: a div with className "error_message" and text errorMessage; else: nothing
+                A header saying "Decks"
+                a div with className "filter_container"
+                    a div with className "filter_row"
+                        an Input with label="Name", type="Checkbox", value=name_box, onChange=(e => update name_box), className="checkbox"
+                        if name_box is true, an input with className="search_bar", type="text", value=name, onChange(update name)
+                    a div with className "filter_row"
+                        an Input with label="Color", type="Checkbox", value="color_box", onChange=(update name), className="checkbox"
+                        if color_box is true, a checkbox for Red, Blue, White, Black, Red
+                    a button with className = "submit" and text "Search" and onClick= call doSearch
+                a div with className "page_selection"
+                    a div with className "left_side"
+                        If there is a prior page of results, display a previous arrow with onClick = update page then call doSearch
+                    a div with className "right_side"
+                        If there is a next page of results, display a next arrow with onClick = update page then call doSearch
+                a div with className "display_container" with when clicked
+                    for every deck in decks:
+                        create an image with the src being the URL from the deck, and when clicked redirects to that deck's page (deck/cardID)
+            </>
+        )
+    }
+    ```
+
+#### "Wanted"
+    props: this doesn't use any props
+    Uses: this is one of the router pages
+    Output: JSX
+    Style Notes: 
+        the search filter will have multiple rows, each row with a checkbox to turn on and off the search feature
+        the error message will be the same across pages, a white box with red border
+        when a card is selected, the popup will be on the top of the page, but not covering the header (the popup will be two columns)
+            then a gray backdrop will appear behind all the cards and header buttons but in front of everything else
+    Pseudocode:
+
+    ```jsx
+    export function Wanted() {
+        create state variables for the search bar:
+            "name_box" (to turn on name search), "name" (to search by name), "color_box", "red", "blue", "white", "black", "green", "power_box", "power", "toughness_box", "toughness", "set_box", "set", "type_box", "type", "subtype_box", "subtype"
+        create a state variable "cards": to hold the list of cards returned by the search
+        create a state variable "isPrevious": to say whether there is a previous page
+        create a state variable "isNext": to say whether there is a next page
+        create a state variable "page": to say the current page number
+        create a state variable "isError": to say whether an error showed up in the search
+        create a state variable "errorMessage": to be the message of the error
+        create a state variable "isCardSelected": to say whether or not a card has been double clicked on
+        create a state variable "selectedCard": to be the double clicked card
+        create a state variable "isMoveToCollection": to show whether the card will be moved to the wanted collection
+        create a state variable "amountToRemove": the number of cards to remove from the collection
+        create a state variable "amountToCollection": the number of cards to add to the wanted collection
+        
+        create an asyncronous function doSearch(){
+            send the search request to the Django server
+            if the request is a success:
+                update the cards
+                if there is a next page, set isNext to true
+                if there is a previous page, set isPrevious to true
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        create an asynchronous function removeFromWanted(){
+            send a remove request to the Django server
+            if the request is a success:
+                if the user wants to add the card to the Collection:
+                    send the add request to the Django server
+                    if that request is a success:
+                        remove the card from the printed list of cards
+                        call doSearch to refresh wanted page
+                    if that request is a failure
+                        set isError to true
+                        set errorMessage to the message in the request
+                        in 7 seconds, set isError to false
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        return(
+            <>
+                if isError is true: a div with className "error_message" and text errorMessage; else: nothing
+                if isCardSelected: a div with className "popup"; else: nothing
+                    a div with className "left_side"
+                        a h3 header saying "Remove from Wanted"
+                        a div saying the card name
+                        an Input with label="Quantity to remove", type=number, value=amountToRemove, onChange = update amountToRemove (ensuring it doesn't exceed the amount in collection)
+                        an Input with label="Add to Collecction", type="Checkbox", value="isMoveToCollection", onChange = update isMoveToCollection
+                        if isMoveToCollection: an Input with label "Amount to add to Collection", type=number, value=amountToColllection, onChange = update amountToColllection (ensuring it doesn't exceed the amount in wanted)
+                    a div with className "right_side"
+                        the image of the card
+                    A button saying submit that when pressed, calls removeFromWanted
+                if isCardSelected: a div with className "cover"; else nothing
+                A header saying "Wanted"
+                a div with className "filter_container"
+                    a div with className "filter_row"
+                        an Input with label="Name", type="Checkbox", value=name_box, onChange=(e => update name_box), className="checkbox"
+                        if name_box is true, an input with className="search_bar", type="text", value=name, onChange(update name)
+                    a div with className "filter_row"
+                        an Input with label="Color", type="Checkbox", value="color_box", onChange=(update name), className="checkbox"
+                        if color_box is true, a checkbox for Red, Blue, White, Black, Red
+                    repeat this process for power, toughness, set, type, subtype (correct input types for each)
+                    a button with className = "submit" and text "Search" and onClick= call doSearch
+                a div with className "page_selection"
+                    a div with className "left_side"
+                        If there is a prior page of results, display a previous arrow with onClick = update page then call doSearch
+                    a div with className "right_side"
+                        If there is a next page of results, display a next arrow with onClick = update page then call doSearch
+                a div with className "display_container"
+                    for every card in cards:
+                        create an image with the src being the URL from the card, and when clicked redirects to that card's page (card/cardID)
+                        when double clicking on the card (dblclick), set isCardSelected to true and selectedCard to this card
+            </>
+        )
+    }
+    ```
+
+#### "Deck/deckID"
+    props: this has no props
+    Uses: this is one of the router pages
+    Output: JSX
+    Style Notes: 
+        the warning will be a whole row on the page. It will not be a popup
+        the error message will be the same across pages, a white box with red border
+        when a card is selected, the popup will be on the top of the page, but not covering the header (the popup will be two columns)
+            then a gray backdrop will appear behind all the cards and header buttons but in front of everything else
+    Pseudocode:
+
+    ```jsx
+    export function Deck(){
+        create a state variable "cards": to hold the cards in the deck
+        create a state variable "deckType": to hold the Type of the deck
+        create a state variable "commander": to hold the commander, if it is a commander deck
+        create a state variable "name": to hold the name of the deck
+        create a state variable "isLegal": to state whether the deck is legal in the given Type (format)
+        create a state variable "legalReason": to hold why the deck is illegal, if it is
+        create a state variable "isInEditMode": to state whether the deck is in edit move
+        create a state variable "cardToRemove": to hold the card to remove
+        create a state variable "cardToAdd": to hold the card to add
+        create a state variable "isError": to state whether there was an error
+        create a state variable "errorMessage": to hold the error message
+        create a state variable "newName": to hold a new name
+        create a state variable "newDeckType": to hold a new deck type
+        create a state variable "newCommander": to hold a new commander
+        create a state variable "isHoveringOnCard": to say whether the user is hovering over a card
+        create a state variable "hoveredCard": to whold which card is being hovered over
+
+        create a sideEffect to get the deck from the server when the page is initially loaded (e =>{
+            request the deck from the Django server
+            if the request is ok:
+                set cards equal to the card list
+                sort the cards by color and type
+                set deckType equal to the deckType given
+                set name equal to the name given
+                if the deckType is commander:
+                    set the commander to the given commander
+            else:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        },[])
+        
+        create an asynchronous function removeFromDeck(){
+            remove the card from cards
+            make the request
+            if the request is not ok:
+                add the card back to cards
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+        create an asynchronous function addToDeck(){
+            make the request to the server
+            if the request is a success:
+                add the card to cards
+                sort the cards by color and type
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+
+        }
+        create an asynchronous function editDeck(){
+            change the name
+            change the commander
+            if there are cards to remove:
+                call removeFromDeck
+            change isInEditMode to false
+            make the request to the server
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request and ask them to reload the page
+                in 7 seconds, set isError to false
+        }
+        create an asynchronous function changeEditMode(){
+            if isInEditMode:
+                set isInEditMode to false
+            else:
+                set newName to the value of Name
+                set newCommander to the value of Commander
+                set newDeckType to the value of deckType
+                set cardToRemove to null
+                set isInEditMOde to true
+        }
+        create an asynchronous function hoverOnCard(){
+            
+        }
+
+        return (
+            <>
+                if not isLegal: a div with className "warning" and text legalReason
+                a div h2 with text "View Deck"
+                a div with className "deck_header"
+                    if isInEditMode:
+                        an Input with label="Name", type="text", value=newName, onChange = edit newName, className="deck_input"
+                        an Input with label="Deck Type", type="text", value=newDeckType, onChange= edit newDeckType, className="deck_input"
+                        if the deckType is commander:
+                            an Input with label="Commander", type="text", value=newCommander, onChange=edit newCommmander, className="deck_input"
+                        a button sith className="edit_button" and value "Cancel" and when pressed calls changeEditMode
+                        a button sith className="edit_button" and value "Save" and when pressed calls editDeck
+                    else:
+                        a div with className="deck_parameter" and value="Name: " + Name 
+                        a div with className="deck_parameter" and value="Deck Type: " + deckType 
+                        if the deckType is commander:
+                            a div with className="deck_parameter" and value="Commander" + Commander
+                        a button sith className="edit_button" and value "Edit" and when pressed calls changeEditMode
+                    an Input with label="Add card", type="text", value=cardToAdd, onchange = update cardToAdd, className="add_card"
+                    a button with className="edit_button", and value "Add Card" and when pressed calls addCard
+                a div with className "deck_display_container"
+                    a div with className "deck_display_header" and text "Creatures"
+                        for every card in cards:
+                            if the card is a creature:
+                                create a div with className "card_info"
+                                    create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true & onmouseout sets isCardHovering to false
+                                    create a div with className "card_mana" and the text be the mana cost of the card
+                                    if isInEditMode:
+                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
+                    a div with className "deck_display_header" and text "Instants"
+                        for every card in cards:
+                            if the card is a instant:
+                                create a div with className "card_info"
+                                    create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true & onmouseout sets isCardHovering to false
+                                    create a div with className "card_mana" and the text be the mana cost of the card
+                                    if isInEditMode:
+                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
+                    a div with className "deck_display_header" and text "Sorceries"
+                        for every card in cards:
+                            if the card is a sorcery:
+                                create a div with className "card_info"
+                                    create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true & onmouseout sets isCardHovering to false
+                                    create a div with className "card_mana" and the text be the mana cost of the card
+                                    if isInEditMode:
+                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
+                    a div with className "deck_display_header" and text "Enchantments"
+                        for every card in cards:
+                            if the card is a enchantment (and nothing prior):
+                                create a div with className "card_info"
+                                    create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true & onmouseout sets isCardHovering to false
+                                    create a div with className "card_mana" and the text be the mana cost of the card
+                                    if isInEditMode:
+                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
+                    a div with className "deck_display_header" and text "Artifacts"
+                        for every card in cards:
+                            if the card is a artifact (and nothing prior):
+                                create a div with className "card_info"
+                                    create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true, onmouseout sets isCardHovering to false, if it is owned, make it have a green border
+                                    create a div with className "card_mana" and the text be the mana cost of the card
+                                    if isInEditMode:
+                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
+                    a div with className "deck_display_header" and text "Lands"
+                        for every card in cards:
+                            if the card is a land (and nothing prior):
+                                create a div with className "card_info"
+                                    create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true & onmouseout sets isCardHovering to false
+                                    create a div with className "card_mana" and the text be the mana cost of the card
+                                    if isInEditMode:
+                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
+            </>
+        )
+    }
+    ```
+
+#### "Card/cardid"
+    props: this has no props
+    Uses: this is a page
+    Output: JSX
+    
+    Pseudocode:
+
+    ```jsx
+    export function Card(){
+        create a state variable "name" that will hold the card name
+        create a state variable "type" that will hold the card type
+        create a state variable "set" that will hold the set
+        create a state variable "url" that will hold the card url
+        create a state variable "amountToAdd" that will hold the amount to add to something
+        create a state variable "whereToAdd" that will hold where to add the card (Collection, Wanted, or Deck)
+        create a state variable "deckToAddTo" that will hold the name of the deck to add the card to (if we are adding to a deck)
+        create a state variable "decks" that will hold the names of the decks of the user (a list of dictionaries)
+        create a state variable "isError" to say whether there was an error
+        create a state variable "errorMessage" to say the error message
+
+        create a a side effect that will only load once(() =>{
+            get the decks from the Django Server
+            if the request is a success:
+                store the decks in the variable decks
+            else:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+            get the card details from the Django server
+            if the request is a success:
+                store the name, type, set, and url in the state variables
+            else:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        },[])
+
+        create an async function addCards(){
+            if whereToAdd is "collection":
+                add the card to the collection by sending a request to the Django server
+            else if whereToAdd is "wanted":
+                add the card to the wanted by sending a request to the Django server
+            else if whereToAdd is "deck":
+                add the card to the specified deck by sending a request to the Django server
+            if the request is not a success:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        return(
+            <>
+                a div with className "column"
+                    a div with className "left_side"
+                        a url with src = url and className="card_image"
+                    a div with className "right_side"
+                        a div with text name and className="card_details"
+                        a div with text type and className="card_details"
+                        a div with text set and className="card_details"
+                a div with className "addCard"
+                    a span with text "Add" 
+                    a number input that is based on amountToAdd (ensure it doesn't go below one)
+                    a span with text "copies of this card to"
+                    an dropdown menu with options "my Collection", "my Wanted", and "my deck", with values "collection", "wanted," and "deck" respectively and onChange updates whereToAdd
+                    if whereToAdd is "deck":
+                        a dropdown menu with options being decknames and values being deck ids and onChange updates deckToAddTo
+                a button saying "Add Card" that when pressed, calls addCard
+            </>
+        )
+    }
+    ```
+
+#### "Search"
+    props: this doesn't use any props
+    Uses: this is one of the router pages
+    Output: JSX
+    Style Notes: 
+        the search filter will have multiple rows, each row with a checkbox to turn on and off the search feature
+        the error message will be the same across pages, a white box with red border
+        when a card is selected, the popup will be on the top of the page, but not covering the header (the popup will be two columns)
+            then a gray backdrop will appear behind all the cards and header buttons but in front of everything else
+    Pseudocode:
+
+    ```jsx
+    export function Search() {
+        create state variables for the search bar:
+            "name_box" (to turn on name search), "name" (to search by name), "color_box", "red", "blue", "white", "black", "green", "power_box", "power", "toughness_box", "toughness", "set_box", "set", "type_box", "type", "subtype_box", "subtype"
+        create a state variable "cards": to hold the list of cards returned by the search
+        create a state variable "isPrevious": to say whether there is a previous page
+        create a state variable "isNext": to say whether there is a next page
+        create a state variable "page": to say the current page number
+        create a state variable "isError": to say whether an error showed up in the search
+        create a state variable "errorMessage": to be the message of the error
+        create a state variable "isCardSelected": to say whether or not a card has been double clicked on
+        create a state variable "selectedCard": to be the double clicked card
+        create a state variable "whereToAdd" that will hold where to add the card (Collection, Wanted, or Deck)
+        create a state variable "deckToAddTo" that will hold the name of the deck to add the card to (if we are adding to a deck)
+        create a state variable "amountToAdd" that will hold the amount to add to something
+        create a state variable "decks" that will hold the names of the decks of the user (a list of dictionaries)
+        
+        create a side effect that will only run once(
+            get the decks from the server
+            if the request is a success:
+                store them in the variable decks
+            else:
+                post the error on the screen as usual
+        ,[])
+
+        create an asyncronous function doSearch(){
+            send the search request to the Django server
+            if the request is a success:
+                update the cards
+                if there is a next page, set isNext to true
+                if there is a previous page, set isPrevious to true
+            if the request is a failure:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        create an async function addCards(){
+            if whereToAdd is "collection":
+                add the card to the collection by sending a request to the Django server
+            else if whereToAdd is "wanted":
+                add the card to the wanted by sending a request to the Django server
+            else if whereToAdd is "deck":
+                add the card to the specified deck by sending a request to the Django server
+            if the request is not a success:
+                set isError to true
+                set errorMessage to the message in the request
+                in 7 seconds, set isError to false
+        }
+
+        return(
+            <>
+                if isError is true: a div with className "error_message" and text errorMessage; else: nothing
+                if isCardSelected: a div with className "popup"; else: nothing
+                    a div with className "addCard"
+                        a span with text "Add" 
+                        a number input that is based on amountToAdd (ensure it doesn't go below one)
+                        a span with text "copies of this card to"
+                        an dropdown menu with options "my Collection", "my Wanted", and "my deck", with values "collection", "wanted," and "deck" respectively and onChange updates whereToAdd
+                        if whereToAdd is "deck":
+                            a dropdown menu with options being decknames and values being deck ids and onChange updates deckToAddTo
+                    a button saying "Add Card" that when pressed, calls addCard
+                if isCardSelected: a div with className "cover"; else nothing
+                A header saying "Search"
+                a div with className "filter_container"
+                    a div with className "filter_row"
+                        an Input with label="Name", type="Checkbox", value=name_box, onChange=(e => update name_box), className="checkbox"
+                        if name_box is true, an input with className="search_bar", type="text", value=name, onChange(update name)
+                    a div with className "filter_row"
+                        an Input with label="Color", type="Checkbox", value="color_box", onChange=(update name), className="checkbox"
+                        if color_box is true, a checkbox for Red, Blue, White, Black, Red
+                    repeat this process for power, toughness, set, type, subtype (correct input types for each)
+                    a button with className = "submit" and text "Search" and onClick= call doSearch
+                a div with className "page_selection"
+                    a div with className "left_side"
+                        If there is a prior page of results, display a previous arrow with onClick = update page then call doSearch
+                    a div with className "right_side"
+                        If there is a next page of results, display a next arrow with onClick = update page then call doSearch
+                a div with className "display_container"
+                    for every card in cards:
+                        create an image with the src being the URL from the card, and when clicked redirects to that card's page (card/cardID)
+                        when double clicking on the card (dblclick), set isCardSelected to true and selectedCard to this card
+            </>
+        )
+    }
+    ```
+    
+#### "Create Deck
+    props: this has no props
+    Uses: this is one of the router pages
+    Output: JSX
+
+    Pseudocode:
+
+    ```jsx
+    export function CreateDeck(){
+        create a state variable "name": this will hold the name of the deck
+        create a state variable "type": this will hold the Type of the deck
+        create a state variable "commander": this will hold the commander if it is a commander deck
+        create a state variable "cards": this will hold the other cards in the deck
+
+        create a async function create(){
+            send the request to the Django server
+            if the request is a success:
+                go to the page of the deck that was created
+            if the request is not a success:
+                do the normal error stuff
+        }
+        return (
+            <>
+                a h2 saying "Create a Deck"
+                an Input saying "Deck Name" and is a text box and connected to name
+                an Input saying "Deck Type" and is a dropdown with the only value being "Commander" and connected to type
+                if the type is commander: an input saying "Commander Name" and is connected to commander
+                an Input saying "Other Cards" and is a text box and is connected to cards
+                a button saying Submit that when pressed, calls create
+            </>
+        )
+    }
+    ```
+
+
+## Reach Custom Hooks
+The following are custom hooks that this project will use

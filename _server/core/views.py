@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.conf  import settings
-import json
-import os
+import os, math, json
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, JsonResponse
-from .models import Deck, MyCard
+from django.forms.models import model_to_dict
+from .models import Deck, MyCard, Collection, Wanted
 from django.forms.models import model_to_dict
 from mtgsdk import Card
 
@@ -303,3 +303,65 @@ def add_or_get_card(card_name):
             )
             return card, True
         return "Invalid card name", False
+
+@login_required
+def sample_collection(req):
+    num_cards = int(req.GET.get("num_cards", "10"))
+    page = int(req.GET.get("page", "1"))
+    if num_cards <= 0 or page <= 0:
+        return HttpResponseBadRequest("Invalid num_cards or page")
+    collection = req.user.collection
+    cards = collection.collection_cards.all().order_by("date_added")
+    if cards.count() == 0 and page == 1:
+        return JsonResponse({"collection": []})
+    if page > math.ceil(cards.count() / num_cards):
+        return HttpResponseBadRequest("Page out of range")
+    start = (page - 1) * num_cards
+    end = start + num_cards
+    if end > cards.count():
+        end = cards.count()
+    cards = cards[start:end]
+    return JsonResponse(
+        {"collection": [model_to_dict(card) for card in cards]}
+    )
+
+@login_required
+def sample_wanted(req):
+    num_cards = int(req.GET.get("num_cards", "10"))
+    page = int(req.GET.get("page", "1"))
+    if num_cards <= 0 or page <= 0:
+        return HttpResponseBadRequest("Invalid num_cards or page")
+    wanted = req.user.wanted
+    cards = wanted.wanted_cards.all().order_by("date_added")
+    if cards.count() == 0 and page == 1:
+        return JsonResponse({"wanted": []})
+    if page > math.ceil(cards.count() / num_cards):
+        return HttpResponseBadRequest("Page out of range")
+    start = (page - 1) * num_cards
+    end = start + num_cards
+    if end > cards.count():
+        end = cards.count()
+    cards = cards[start:end]
+    return JsonResponse(
+        {"wanted": [model_to_dict(card) for card in cards]}
+    )
+
+@login_required
+def sample_decks(req):
+    num_decks = int(req.GET.get("num_decks", "10"))
+    page = int(req.GET.get("page", "1"))
+    if num_decks <= 0 or page <= 0:
+        return HttpResponseBadRequest("Invalid num_decks or page")
+    decks = req.user.decks.order_by("updated_at")
+    if decks.count() == 0 and page == 1:
+        return JsonResponse({"decks": []})
+    if page > math.ceil(decks.count() / num_decks):
+        return HttpResponseBadRequest("Page out of range")
+    start = (page - 1) * num_decks
+    end = start + num_decks
+    if end > decks.count():
+        end = decks.count()
+    decks = decks[start:end]
+    return JsonResponse(
+        {"decks": [model_to_dict(card) for card in decks]}
+    )   

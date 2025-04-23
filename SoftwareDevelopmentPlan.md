@@ -52,7 +52,7 @@ The following pages will be done in React:
 Pages will have the following banner across the top:
     When a user is logged out: Home        *large gap*             Login *small gap* Create Account
 
-    When a user is logged in: Home *small gap* Dashboard *small gap* Collection *small gap* Wanted *small gap* Decks     *medium gap* Search Bar *medium gap*      Logout
+    When a user is logged in: Dashboard *small gap* Collection *small gap* Wanted *small gap* Decks     *medium gap* Search Bar *small gap* search button *medium gap*      Logout
 
 Note: The search bar will only search cards based on name.
 
@@ -363,7 +363,7 @@ Now we are ready to build pseudocode for the endpoints in Django.
         numpages: the number of pages with this many cards
 
     ```python
-    def sample_collection(req):
+    def sample_collection(req, num_cards, page):
         unpack the input dictionary from the request. 
         If num_cards isn't in the dictionary, return an error
         grab the collection from the user
@@ -383,9 +383,8 @@ Now we are ready to build pseudocode for the endpoints in Django.
         numpages: the number of pages with this many cards
 
     ```python
-    def sample_collection(req):
-        unpack the input dictionary from the request. 
-        If num_cards isn't in the dictionary, return an error
+    def sample_wanted(req):
+        get num_cards and page from the query string
         grab the wanted from the user
         if the page is too high, return an error
         grab the most recently added cards to the wanted from the database
@@ -403,9 +402,8 @@ Now we are ready to build pseudocode for the endpoints in Django.
         numpages: the number of pages with this many decks
 
     ```python
-    def sample_collection(req):
-        unpack the input dictionary from the request. 
-        If num_decks isn't in the dictionary, return an error
+    def sample_decks(req):
+        get num_decks and page from the query string
         grab the most recently edited decks from the database
         if the page is too high, return an error
         chop off all but (at most) num_decks of them at that page
@@ -431,8 +429,7 @@ Now we are ready to build pseudocode for the endpoints in Django.
 
     ```python
     def search_collection(req):
-        get the dictionary from the body
-        if num_cards or page are missing, return an error
+        get num_cards and page from the query string
         get name from the dictionary
         get colors from the dictionary
         ...
@@ -536,18 +533,17 @@ This performs a search on the users decks
     Psuedocode:
     ```jsx
     export function Header() {
-        define a different function for each button that handles when it is pressed
         return(
             <>
                 create a div with the className "header"
                     create a div with the className "left_side"
-                        create a link saying "Home" and leaving reactRouter to go to "/home/"
-                        create a link saying "Dashboard" and staying in reactRouter to go to "/Dashboard"
-                        create a link saying "Collection" and staying in reactRouter to go to "/Collection"
-                        create a link saying "Wanted" and staying in reactRouter to go to "/Wanted"
-                        create a link saying "Decks" and staying in reactRouter to go to "/Decks"
+                        create a link saying "Dashboard" and staying in reactRouter to go to "/dashboard"
+                        create a link saying "Collection" and staying in reactRouter to go to "/collection"
+                        create a link saying "Wanted" and staying in reactRouter to go to "/wanted"
+                        create a link saying "Decks" and staying in reactRouter to go to "/decks"
                     create a div with the className "center"
                         Display a search bar with default text "Search Cards"
+                        Display a button with text "Search"
                     create a div with the className "right_side"
                         create a link saying "Logout" and leaving reactRouter to go to "/registration/logout/"
                 a div with className "header_filler"
@@ -556,27 +552,117 @@ This performs a search on the users decks
     }
     ```
 
-#### "SampleCollection"
+#### "Input"
+    props: This takes in state variables (for state hoisting purposes)
+    Uses: this is a component. It will be used to collect input
+    Output: JSX
+    Pseudocode:
+
+    ```jsx
+    export function Input({label, ...props}){
+        return(
+            label with className "input_label"
+                the label
+                Input with className="input", and the props ({...props})
+        )
+    }
+    ```
+#### "Error"
+    props: 
+        errorMessage: the error message
+    Uses: this is a component. It is used to output errors on the screen
+    Output: JSX
+    Pseudocode:
+
+    ```jsx
+    export function Error(errorMessage){
+        return (
+            div with className "error_message" and text errorMessage
+        )
+    }
+    ```
+
+
+## Reach Custom Hooks
+The following are custom hooks that this project will use
+
+#### getLogout
+    Props: none
+    Uses: gets a function to call to use to logout
+    Output: a function that can be called
+    Pseudocode:
+
+    ```jsx
+    export function getLogout() {
+        async function logout() {
+            send a request to the server to logout
+
+            if the request is ok:
+                go to the sign in page
+            else:
+                show a popup error
+        }
+        return logout;
+    }   
+    ```
+
+#### "getRequest"
+    Input: 
+        none. but the returned function has the following input:
+            uri: where to send the request
+            method="GET": an optional request method
+            body=null: an optional body for the request
+            headers =  {"Content-Type": "application/json", "X-CSRFToken": Cookies.get("csrftoken")}: and optional header
+    Uses: to make requests from the Django server
+    Output: 
+        a function to call to make the request
+    Pseudocode:
+
+    ```jsx
+    export function getRequest(){
+        async function request(
+            uri,
+            method="GET",
+            body=null
+            headers =  {"Content-Type": "application/json", "X-CSRFToken": Cookies.get("csrftoken")} 
+        ){
+            const options = {
+                method,
+                credentials: "same-origin",
+                headers,
+            }
+            if (method !== GET){
+                options.body = body
+            }
+            const response = await fetch('uri/to/request', options);
+            // Generically handle errors
+            // Handle Parsing
+            return response;
+            
+        }
+    }
+    ```
+
+#### "useSampleCollection"
     Input:
         numCards: the number of cards to return
         pageNum: the page number of the paginated results
     Uses: This will be used on the Dashboard to show collection cards
-    Output: a list of cards
+    Output: a function to call to get the list of cards
     Psuedocode:
+
     ```jsx
     export function SampleCollection(numCards, pageNum){
-        set a 'sample' to be a state variable
+        set sample to be a state variable
         define an async function fetchCollectionCards(){
             make a request to the server requesting numCards cards on pageNum
             if the request is OK:
-                update 'sample' to be the list of cards
+                set sample to be a state variable
             otherwise:  
-                output an error message
+                return the error message
         }
-        create a side effect that will run only once{
-            call fetchCollectionCards()
-        }
-        return 'sample'
+        define a useEffect that will call fetCollectionCards exactly once
+        return sample
     }
     ```
 
@@ -587,6 +673,7 @@ This performs a search on the users decks
     Uses: This will be used on the Dashboard to show wanted cards
     Output: a list of cards
     Psuedocode:
+
     ```jsx
     export function SampleWanted(numCards, pageNum){
         set a 'sample' to be a state variable
@@ -611,6 +698,7 @@ This performs a search on the users decks
     Uses: This will be used on the Dashboard to show decks
     Output: a list of decks
     Psuedocode:
+
     ```jsx
     export function SampleDecks(numDecks, pageNum){
         set a 'sample' to be a state variable
@@ -628,13 +716,15 @@ This performs a search on the users decks
     }
     ```
 
+## Reach Pages
+
 #### "Layout"
     Props: This doesn't have any props
     Uses: This will be the template for every page
     Output: JSX
     Pseudocode:
     ```jsx
-    export default App(){
+    export default Layout(){
         <Header />
         <main>
             <Outlet />
@@ -649,6 +739,10 @@ This performs a search on the users decks
     Pseudocode:
     ```jsx
     export function Dashboard(){
+        make collectionCards a state variable
+        make wantedCards a state variable
+        make decks a state variable
+
         set collectionCards equal to SampleCollection(10,1)
         set wantedCards equal to sampleCollection(10,1)
         set decks equal to sampleDecks(10,1)
@@ -665,21 +759,6 @@ This performs a search on the users decks
                 a div with className equal to "wanted_cards"
                     map all the cards in wantedCards to an image with the cards URL and when clicked, lead to (within reactRouter) that card's page
             </>
-        )
-    }
-    ```
-
-#### "Input"
-    props: This takes in state variables (for state hoisting purposes)
-    Uses: this is a component. It will be used to collect input
-    Output: JSX
-    Pseudocode:
-    ```jsx
-    export function Input({label, ...props}){
-        return(
-            label with className "input_label"
-                the label
-                Input with className="input", and the props ({...props})
         )
     }
     ```
@@ -1296,7 +1375,3 @@ This performs a search on the users decks
         )
     }
     ```
-
-
-## Reach Custom Hooks
-The following are custom hooks that this project will use

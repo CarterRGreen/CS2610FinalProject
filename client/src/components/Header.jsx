@@ -14,7 +14,11 @@ export function Header() {
                 </div>
                 <div className="center">
                     <Input type="text" placeholder="Search Cards" />
-                    <button className="search_button">Search</button>
+                    <button className="search_button" onClick={
+                        () => {
+                            
+                        }
+                    }>Search</button>
                 </div>
                 <div className="right_side">
                     <button onClick={logout} className="link">Logout</button>

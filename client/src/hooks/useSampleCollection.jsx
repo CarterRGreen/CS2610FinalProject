@@ -7,7 +7,10 @@ export function useSampleCollection(numCards,pageNum){
     async function fetchCollectionCards(){
         const response = await makeRequest(`/sample_collection/?num_cards=${numCards}&page=${pageNum}`);
         if (response.ok){
-            const { collection } = await response.json();
+            const { collection , collection_cards } = await response.json();
+            for(let i = 0; i < collection_cards.length; i++){
+                collection[i].amount = collection_cards[i].amount;
+            }
             setSample(collection);
         }
         else{

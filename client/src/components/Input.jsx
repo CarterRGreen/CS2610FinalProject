@@ -1,4 +1,4 @@
-export function Input({props}){
+export function Input({...props}){
     return(
         <input {...props} className="input"/>
     )

@@ -13,8 +13,8 @@ export function Dashboard(){
             <Link to="/collection" className="link">View Collection</Link>
             <div className="collection_cards">
                 {collectionCards.map((card) => (
-                    <Link to={`/card/${card.id}`} key={card.id}>
-                        <img src={card.imageUrl} alt={card.name} />
+                    <Link to={`/card/${card.card_id}`} key={card.id}>
+                        <img src={card.image} alt={card.name} />
                     </Link>
                 ))}
             </div>
@@ -22,15 +22,15 @@ export function Dashboard(){
             <div className="decks">
                 {decks.map((deck) => (
                     <Link to={`/deck/${deck.id}`} key={deck.id}>
-                        <img src={deck.imageUrl} alt={deck.name} />
+                        <img src={deck.image} alt={deck.name} />
                     </Link>
                 ))}
             </div>
             <Link to="/wanted" className="link">View Wanted Cards</Link>
             <div className="wanted_cards">
                 {wantedCards.map((card) => (
-                    <Link to={`/card/${card.id}`} key={card.id}>
-                        <img src={card.imageUrl} alt={card.name} />
+                    <Link to={`/card/${card.card_id}`} key={card.id}>
+                        <img src={card.image} alt={card.name} />
                     </Link>
                 ))}
             </div>

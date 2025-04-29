@@ -11,9 +11,9 @@ class MyCard(models.Model):
     type = models.CharField(max_length=255)
     subtype = models.CharField(max_length=255)
     set = models.CharField(max_length=255)
-    power = models.IntegerField()
-    toughness = models.IntegerField()
-    loyalty = models.IntegerField()
+    power = models.IntegerField(null=True, blank=True)
+    toughness = models.IntegerField(null=True, blank=True)
+    loyalty = models.IntegerField(null=True, blank=True)
     text = models.TextField()
     rarity = models.CharField(max_length=255)
 

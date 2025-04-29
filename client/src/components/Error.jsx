@@ -1,5 +1,5 @@
-export function Error(errorMessage){
+export function Error({errorMessage}){
     return (
-        <div className="error_message">{errorMessage}</div>
+        <div className="error_message">{errorMessage}. Please Reload the Page.</div>
     )
 }

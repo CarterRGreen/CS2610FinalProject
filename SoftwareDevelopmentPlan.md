@@ -39,7 +39,7 @@
 
 # Stage 2: Psuedocode:
 
-### Before I get into nitty gritty details, lets talk about page organization. 
+## Before I get into nitty gritty details, lets talk about page organization. 
 
 The following pages will be done in Django: **Note that nice features to have are in parenthesis**
     
@@ -346,12 +346,21 @@ Now we are ready to build pseudocode for the endpoints in Django.
         bundle that request inside of a dictionary and return it
     ```
 
-#### "/search_for_card/"
+#### "/search_database/"
     This performs a search in the mtgsdk for card details
-    Input: Dictionary in JSON
+    Input: Dictionary in JSON (from query string)
+        includes many filter options
     Output: Dictionary in JSON
         cards: a list of dictionaries of card details
     pseudocode:
+
+    ```python
+    def search_database(req){
+        get num_cards and page from request
+        search the mtgsdk database for cards based on the filter options
+        return the search results
+    }
+    ```
 
 #### "/sample_collection/"
     This grabs the most recent cards that have been added to the collection
@@ -363,7 +372,7 @@ Now we are ready to build pseudocode for the endpoints in Django.
         numpages: the number of pages with this many cards
 
     ```python
-    def sample_collection(req, num_cards, page):
+    def sample_collection(req):
         unpack the input dictionary from the request. 
         If num_cards isn't in the dictionary, return an error
         grab the collection from the user
@@ -412,7 +421,7 @@ Now we are ready to build pseudocode for the endpoints in Django.
 
 #### "/search_collection/"
     This performs a search on the cards in the collection
-    Input: Dictionary in JSON 
+    Input: Dictionary in query
         num_cards: the maximum number of cards to return
         page: the page of results (number)
         name: the name of the card (string)
@@ -423,14 +432,14 @@ Now we are ready to build pseudocode for the endpoints in Django.
         power: the power of the card (int)
         toughness: the toughness of the card (int)
     Output: Dictionary in JSON
-        cards: a list of cards
+        cards: a list of collection_cards
         num_pages: how many pages of results there are
     Pseudocode:
 
     ```python
     def search_collection(req):
         get num_cards and page from the query string
-        get name from the dictionary
+        get name from the query string
         get colors from the dictionary
         ...
         get power from the dictionary (default value of -1)
@@ -777,7 +786,7 @@ The following are custom hooks that this project will use
     ```jsx
     export function Collection() {
         create state variables for the search bar:
-            "name_box" (to turn on name search), "name" (to search by name), "color_box", "red", "blue", "white", "black", "green", "power_box", "power", "toughness_box", "toughness", "set_box", "set", "type_box", "type", "subtype_box", "subtype"
+            "nameBox" (to turn on name search), "name" (to search by name), "colorBox", "red", "blue", "white", "black", "green", "powerBox", "power", "toughnessBox", "toughness", "setBox", "set", "typeBox", "type", "subtypeBox", "subtype"
         create a state variable "cards": to hold the list of cards returned by the search
         create a state variable "isPrevious": to say whether there is a previous page
         create a state variable "isNext": to say whether there is a next page
@@ -798,7 +807,7 @@ The following are custom hooks that this project will use
                 if there is a previous page, set isPrevious to true
             if the request is a failure:
                 set isError to true
-                set errorMessage to the message in the request
+                say an error occured in the search
                 in 7 seconds, set isError to false
         }
 
@@ -812,13 +821,15 @@ The following are custom hooks that this project will use
                         call doSearch to refresh collection page
                     if that request is a failure
                         set isError to true
-                        set errorMessage to the message in the request
+                        say an error occured adding to wanted
                         in 7 seconds, set isError to false
             if the request is a failure:
                 set isError to true
-                set errorMessage to the message in the request
+                say an error occured removing from collection
                 in 7 seconds, set isError to false
         }
+
+        create a side effect that calls the search on initial load
 
         return(
             <>
@@ -869,7 +880,7 @@ The following are custom hooks that this project will use
 
     ```jsx
     export function Decks(){
-        create state variables for the search bar: "isName", "name", "isColor", "red", "blue", "white", "black", "green" 
+        create state variables for the search bar: "nameBox", "name", "colorBox", "red", "blue", "white", "black", "green" 
         create a state variable "decks": to hold the list of decks
         create a state variable "isPrevious": to say whether there is a previous page
         create a state variable "isNext": to say whether there is a previous page
@@ -891,6 +902,7 @@ The following are custom hooks that this project will use
             <>
                 if isError is true: a div with className "error_message" and text errorMessage; else: nothing
                 A header saying "Decks"
+                a button saying "Create New Deck"
                 a div with className "filter_container"
                     a div with className "filter_row"
                         an Input with label="Name", type="Checkbox", value=name_box, onChange=(e => update name_box), className="checkbox"
@@ -1125,8 +1137,6 @@ The following are custom hooks that this project will use
                                 create a div with className "card_info"
                                     create a div with className "card_name" and text name of card and onmouseover sets the hoveredCard to this card and isCardHovering to true & onmouseout sets isCardHovering to false
                                     create a div with className "card_mana" and the text be the mana cost of the card
-                                    if isInEditMode:
-                                        create a div with className "card_removal" and the text to be a minus that when pressed, adds the card to cardsToRemove and removes it from cards
                     a div with className "deck_display_header" and text "Instants"
                         for every card in cards:
                             if the card is a instant:
@@ -1184,7 +1194,7 @@ The following are custom hooks that this project will use
         create a state variable "name" that will hold the card name
         create a state variable "type" that will hold the card type
         create a state variable "set" that will hold the set
-        create a state variable "url" that will hold the card url
+        create a state variable "image" that will hold the card image url
         create a state variable "amountToAdd" that will hold the amount to add to something
         create a state variable "whereToAdd" that will hold where to add the card (Collection, Wanted, or Deck)
         create a state variable "deckToAddTo" that will hold the name of the deck to add the card to (if we are adding to a deck)
@@ -1226,7 +1236,7 @@ The following are custom hooks that this project will use
             <>
                 a div with className "column"
                     a div with className "left_side"
-                        a url with src = url and className="card_image"
+                        a url with src = image and className="card_image"
                     a div with className "right_side"
                         a div with text name and className="card_details"
                         a div with text type and className="card_details"

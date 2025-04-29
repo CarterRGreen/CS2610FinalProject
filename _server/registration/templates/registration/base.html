@@ -17,15 +17,17 @@
       <a href="/home/" class="active_link link">Home</a>
     </span>
     <span class="right_side">
-      <a href="/registration/sign_in"class="active_link link">Login</a>
+      <a href="/registration/sign_in/"class="active_link link">Login</a>
       <a href="/registration/sign_up/" class="active_link link">Create Account</a>
     </span>
   </div>
   <div class="header_filler"></div>
   <main>
-    <h1>MTG Card and Deck Database</h1>
-    {% block content %}
-    {% endblock %}
+    <div class="flex_container">
+      <h1>MTG Card and Deck Database</h1>
+      {% block content %}
+      {% endblock %}
+    </div>
   </main>
 </body>
 </html>
